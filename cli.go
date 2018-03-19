@@ -15,6 +15,6 @@ func (cli *CLI) Run() {
 	flag.Parse()
 
 	cli.Conf = *conf
-	cli.Command = *comman
+	cli.Command = *command
 
 }
