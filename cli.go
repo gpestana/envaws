@@ -1,20 +1,31 @@
 package main
 
 import (
+	"errors"
 	"flag"
 )
 
 type CLI struct {
-	Conf    string
-	Command string
+	ConfPath string
+	Command  string
 }
 
-func (cli *CLI) Run() {
-	conf := flag.String("conf", "", "configurations")
-	command := flag.String("command", "", "command to run") //TODO: funny name, change
+func (cli *CLI) Run() error {
+	conf := flag.String("conf", "", "Path for envaws configurations [required]")
+	command := flag.String("command", "", "Command to be called [required]")
 	flag.Parse()
 
-	cli.Conf = *conf
+	cli.ConfPath = *conf
 	cli.Command = *command
 
+	if cli.ConfPath == "" {
+		flag.PrintDefaults()
+		return errors.New("-conf flag missing")
+	}
+
+	if cli.Command == "" {
+		flag.PrintDefaults()
+		return errors.New("-command flag missing")
+	}
+	return nil
 }
