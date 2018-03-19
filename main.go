@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -9,7 +12,27 @@ import (
 
 func main() {
 	cli := CLI{}
-	cli.Run()
+	err := cli.Run()
+	if err != nil {
+		os.Exit(1)
+	}
+
+	// parses configurations for envaws
+	//envawsConf := parseConf(cli.ConfPath)
+
+	fn := func() {
+		fmt.Println("envaws: Configurations changed, exiting process")
+		os.Exit(0)
+	}
+
+	bucket, key, secretKey, accessKey, err := parseConfig(cli.ConfPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	config := NewConfig(bucket, key, secretKey, accessKey, fn)
+	config.GetConfigurations()
+	config.StartPolling()
 
 	// prepares new process
 	cmd := exec.Command(cli.Command)
@@ -23,7 +46,7 @@ func main() {
 	cmd.Env = env
 
 	// starts new process
-	err := cmd.Start()
+	err = cmd.Start()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,4 +57,30 @@ func main() {
 	}
 
 	log.Println("Done")
+}
+
+func parseConfig(path string) (string, string, string, string, error) {
+	type C struct {
+		Bucket    string `json:"bucket"`
+		Key       string `json:"key"`
+		SecretKey string `json:"secret_key"`
+		AccessKey string `json:"access_key"`
+	}
+
+	c := C{}
+	js, err := ioutil.ReadFile(path)
+	if err != nil {
+		return c.Bucket, c.Key, c.SecretKey, c.AccessKey, err
+	}
+
+	err = json.Unmarshal(js, &c)
+	if c.Bucket == "" {
+		return c.Bucket, c.Key, c.SecretKey, c.AccessKey, errors.New("conf: bucket name should be provided")
+	}
+
+	if c.Key == "" {
+		return c.Bucket, c.Key, c.SecretKey, c.AccessKey, errors.New("conf: key should be provided")
+	}
+
+	return c.Bucket, c.Key, c.SecretKey, c.AccessKey, nil
 }

@@ -1,10 +1,12 @@
-all: test build env
+all: test build
+auto: all env
 
 build:
 	go build .
 
 test: 
+	go tool vet .
 	go test ./... -cover
 
 env:
-	./awsenv -command "./example/env.sh"
+	./envaws -conf ./example/configs.json -command "./example/env.sh"
