@@ -6,7 +6,7 @@ queues.
 
 Envaws provides a convenient way to launch a subprocess with environment 
 variables populated from AWS services S3 and SQS. The tool is inspired by 
-envconsul.
+[envconsul](https://github.com/hashicorp/envconsul).
 
 Envaws supports [12-factor applications](https://12factor.net/) which get their 
 configuration via the environment. Environment variables are dynamically 
@@ -15,6 +15,19 @@ environment variables. This enables extreme flexibility and portability for
 applications across systems.
 
 ## Installation
+
+### Pre-compiled
+
+1) Download the binary
+```
+$ curl -so envaws https://raw.githubusercontent.com/gpestana/envaws/master/binary/envaws
+```
+
+2) Move the binary into your `$PATH`.
+```
+$ mv envaws /usr/local/bin/envaws
+$ chmod +x /usr/local/bin/envaws
+```
 
 ## Quick Example
 
