@@ -21,7 +21,7 @@ applications across systems.
 1) Download the binary
 
 ```
-$ curl -so envaws https://raw.githubusercontent.com/gpestana/envaws/master/binary/envaws
+$ curl -so envaws https://raw.githubusercontent.com/gpestana/envaws/master/bin/envaws
 ```
 
 2) Make binary executable
