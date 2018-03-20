@@ -19,11 +19,19 @@ applications across systems.
 ### Pre-compiled
 
 1) Download the binary
+
 ```
 $ curl -so envaws https://raw.githubusercontent.com/gpestana/envaws/master/binary/envaws
 ```
 
-2) Move the binary into your `$PATH`.
+2) Make binary executable
+
+```
+$ chmod 755 envaws
+```
+
+3) Move the binary into your `$PATH`.
+
 ```
 $ mv envaws /usr/local/bin/envaws
 $ chmod +x /usr/local/bin/envaws

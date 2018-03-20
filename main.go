@@ -30,9 +30,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	config := NewConfig(bucket, key, secretKey, accessKey, fn)
+	config := NewConfig(5, bucket, key, secretKey, accessKey, fn)
 	config.GetConfigurations()
-	config.StartPolling()
+	go config.StartPolling()
 
 	// prepares new process
 	cmd := exec.Command(cli.Command)

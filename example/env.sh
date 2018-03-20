@@ -5,4 +5,4 @@ echo "Running env example script"
 echo $VAR1
 echo $VAR2
 
-sleep 2
+sleep 60
