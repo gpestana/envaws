@@ -29,12 +29,12 @@ func NewConfig(interv int, bucket string, key string, aKey string, sKey string, 
 	}
 }
 
-func (c *Config) GetConfigurations() {
+func (c *Config) GetConfigurations() (string, error) {
 	res, err := c.Interface.GetContent()
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
-	log.Println(res.String())
+	return res.String(), nil
 }
 
 func (c *Config) StartPolling() {

@@ -25,24 +25,25 @@ func main() {
 		os.Exit(0)
 	}
 
-	bucket, key, secretKey, accessKey, err := parseConfig(cli.ConfPath)
+	c, err := parseConfig(cli.ConfPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	config := NewConfig(5, bucket, key, secretKey, accessKey, fn)
-	config.GetConfigurations()
+	config := NewConfig(c.PollingInterval, c.Bucket, c.Key, c.SecretKey, c.AccessKey, fn)
+
+	conf, err := config.GetConfigurations()
+	if err != nil {
+		log.Fatal(err)
+	}
 	go config.StartPolling()
 
-	// prepares new process
 	cmd := exec.Command(cli.Command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// populate process env environment
 	env := os.Environ()
-	env = append(env, fmt.Sprintf("VAR1=%v", "var_1"))
-	env = append(env, fmt.Sprintf("VAR2=%v", "var_2"))
+	env = append(env, fmt.Sprintf("CONFIGS=%v", conf))
 	cmd.Env = env
 
 	// starts new process
@@ -55,32 +56,35 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println("Done")
 }
 
-func parseConfig(path string) (string, string, string, string, error) {
-	type C struct {
-		Bucket    string `json:"bucket"`
-		Key       string `json:"key"`
-		SecretKey string `json:"secret_key"`
-		AccessKey string `json:"access_key"`
-	}
+type C struct {
+	PollingInterval int    `json:"polling_interval"`
+	Bucket          string `json:"bucket"`
+	Key             string `json:"key"`
+	SecretKey       string `json:"secret_key"`
+	AccessKey       string `json:"access_key"`
+}
 
+func parseConfig(path string) (C, error) {
 	c := C{}
 	js, err := ioutil.ReadFile(path)
 	if err != nil {
-		return c.Bucket, c.Key, c.SecretKey, c.AccessKey, err
+		return c, err
 	}
 
 	err = json.Unmarshal(js, &c)
 	if c.Bucket == "" {
-		return c.Bucket, c.Key, c.SecretKey, c.AccessKey, errors.New("conf: bucket name should be provided")
+		return c, errors.New("conf: bucket name should be provided")
 	}
 
 	if c.Key == "" {
-		return c.Bucket, c.Key, c.SecretKey, c.AccessKey, errors.New("conf: key should be provided")
+		return c, errors.New("conf: key should be provided")
 	}
 
-	return c.Bucket, c.Key, c.SecretKey, c.AccessKey, nil
+	if c.PollingInterval == 0 {
+		return c, errors.New("conf: polling_interval should be provided")
+	}
+
+	return c, nil
 }

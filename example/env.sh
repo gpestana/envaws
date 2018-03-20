@@ -2,7 +2,6 @@
 
 echo "Running env example script"
 
-echo $VAR1
-echo $VAR2
+echo $CONFIGS
 
-sleep 60
+while true; do sleep 1; done

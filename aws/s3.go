@@ -5,7 +5,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"log"
 )
 
 type S3 struct {
@@ -56,7 +55,6 @@ func (s *S3) GetContent() (bytes.Buffer, error) {
 }
 
 func (s *S3) GeCurrentETag() (string, error) {
-	log.Println("GeCurrentETag")
 	b, err := s.getObjectS3()
 	if err != nil {
 		return "", err
