@@ -6,30 +6,41 @@ import (
 	"time"
 )
 
-type Config struct {
-	Env             map[string]string
-	Interface       *aws.S3
-	changedFn       func()
-	accessKey       string
-	secretKey       string
-	lastCheckedETag string
-	pollingInt      int
+type ConfigManager interface {
+	GetConfigurations() (string, error)
+	StartPolling()
 }
 
-func NewConfig(interv int, bucket string, key string, aKey string, sKey string, f func()) Config {
-	intf := aws.New(bucket, key)
+type managerConfig struct {
+	changedFn  func()
+	pollingInt int
+	accessKey  string
+	secretKey  string
+}
 
-	return Config{
+type S3Config struct {
+	Env             map[string]string
+	Interface       *aws.S3
+	lastCheckedETag string
+	config          managerConfig
+}
+
+func NewS3ConfigManager(interv int, bucket string, key string, aKey string, sKey string, f func()) S3Config {
+	intf := aws.NewS3(bucket, key)
+
+	return S3Config{
 		Interface:       &intf,
-		changedFn:       f,
-		accessKey:       aKey,
-		secretKey:       sKey,
-		pollingInt:      interv,
 		lastCheckedETag: "",
+		config: managerConfig{
+			changedFn:  f,
+			accessKey:  aKey,
+			secretKey:  sKey,
+			pollingInt: interv,
+		},
 	}
 }
 
-func (c *Config) GetConfigurations() (string, error) {
+func (c *S3Config) GetConfigurations() (string, error) {
 	res, err := c.Interface.GetContent()
 	if err != nil {
 		return "", err
@@ -37,9 +48,9 @@ func (c *Config) GetConfigurations() (string, error) {
 	return res.String(), nil
 }
 
-func (c *Config) StartPolling() {
+func (c *S3Config) StartPolling() {
 	// checks ETag every <c.interval> seconds
-	for _ = range time.Tick(time.Duration(time.Duration(c.pollingInt) * time.Second)) {
+	for _ = range time.Tick(time.Duration(time.Duration(c.config.pollingInt) * time.Second)) {
 		go func() {
 			etag, err := c.Interface.GeCurrentETag()
 			if err != nil {
@@ -54,8 +65,24 @@ func (c *Config) StartPolling() {
 
 			if etag != c.lastCheckedETag {
 				c.lastCheckedETag = etag
-				c.changedFn()
+				c.config.changedFn()
 			}
 		}()
 	}
 }
+
+type SSMConfig struct {
+	Names     []string
+	Interface *aws.SSM
+	config    managerConfig
+}
+
+func NewSSMConfigManager(config C, f func()) SSMConfig {
+	return SSMConfig{}
+}
+
+func (c *SSMConfig) GetConfigurations() (string, error) {
+	return "", nil
+}
+
+func (c *SSMConfig) StartPolling() {}
