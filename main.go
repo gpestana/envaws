@@ -17,9 +17,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// parses configurations for envaws
-	//envawsConf := parseConf(cli.ConfPath)
-
 	fn := func() {
 		fmt.Println("envaws: Configurations changed, exiting process")
 		os.Exit(0)
