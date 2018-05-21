@@ -32,10 +32,8 @@ func main() {
 	switch cli.Service {
 	case "s3":
 		config = NewS3ConfigManager(c, fn)
-	case "ssm":
-		config = NewSSMConfigManager(c, fn)
-	// default service is ssm
-	case "":
+	case "ssm", "":
+		// default service is ssm
 		config = NewSSMConfigManager(c, fn)
 	default:
 		log.Fatal(

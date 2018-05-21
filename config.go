@@ -25,22 +25,22 @@ type S3Config struct {
 	config          managerConfig
 }
 
-func NewS3ConfigManager(interv int, bucket string, key string, aKey string, sKey string, f func()) S3Config {
-	intf := aws.NewS3(bucket, key)
+func NewS3ConfigManager(config C, f func()) S3Config {
+	intf := aws.NewS3(config.S3.Bucket, config.S3.Key)
 
 	return S3Config{
 		Interface:       &intf,
 		lastCheckedETag: "",
 		config: managerConfig{
 			changedFn:  f,
-			accessKey:  aKey,
-			secretKey:  sKey,
-			pollingInt: interv,
+			accessKey:  config.S3.Key,
+			secretKey:  config.S3.Bucket,
+			pollingInt: config.PollingInterval,
 		},
 	}
 }
 
-func (c *S3Config) GetConfigurations() (string, error) {
+func (c S3Config) GetConfigurations() (string, error) {
 	res, err := c.Interface.GetContent()
 	if err != nil {
 		return "", err
@@ -48,8 +48,7 @@ func (c *S3Config) GetConfigurations() (string, error) {
 	return res.String(), nil
 }
 
-func (c *S3Config) StartPolling() {
-	// checks ETag every <c.interval> seconds
+func (c S3Config) StartPolling() {
 	for _ = range time.Tick(time.Duration(time.Duration(c.config.pollingInt) * time.Second)) {
 		go func() {
 			etag, err := c.Interface.GeCurrentETag()
@@ -81,8 +80,8 @@ func NewSSMConfigManager(config C, f func()) SSMConfig {
 	return SSMConfig{}
 }
 
-func (c *SSMConfig) GetConfigurations() (string, error) {
+func (c SSMConfig) GetConfigurations() (string, error) {
 	return "", nil
 }
 
-func (c *SSMConfig) StartPolling() {}
+func (c SSMConfig) StartPolling() {}
