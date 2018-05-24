@@ -1,5 +1,9 @@
 {
+  "region": "eu-west-1",
 	"polling_interval": 3,
-	"bucket": "gpestana-conf",
-	"key": "foo/env.json"
+  "s3": {
+	  "bucket": "gpestana-conf",
+	  "key": "foo/env.json"
+  },
+  "ssm": {}
 }
