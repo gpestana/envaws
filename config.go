@@ -26,7 +26,7 @@ type S3Config struct {
 }
 
 func NewS3ConfigManager(config C, f func()) S3Config {
-	intf := aws.NewS3(config.S3.Bucket, config.S3.Key)
+	intf := aws.NewS3(config.S3.Bucket, config.S3.Key, config.Region)
 
 	return S3Config{
 		Interface:       &intf,
@@ -77,7 +77,11 @@ type SSMConfig struct {
 }
 
 func NewSSMConfigManager(config C, f func()) SSMConfig {
-	return SSMConfig{}
+	intf := aws.NewSSM(config.Region)
+
+	return SSMConfig{
+		Interface: &intf,
+	}
 }
 
 func (c SSMConfig) GetConfigurations() (string, error) {

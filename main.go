@@ -82,6 +82,7 @@ type C struct {
 	SecretKey       string `json:"secret_key"`
 	AccessKey       string `json:"access_key"`
 	PollingInterval int    `json:"polling_interval"`
+	Region          string `json:"region"`
 }
 
 func parseConfig(path string) (C, error) {

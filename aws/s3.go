@@ -16,9 +16,9 @@ type S3 struct {
 	Client    *s3.S3
 }
 
-func NewS3(b string, k string) S3 {
+func NewS3(b string, k string, r string) S3 {
 	awsConf := &aws.Config{
-		Region: aws.String("eu-west-1"), // get from S3 struct
+		Region: aws.String(r),
 	}
 	sess := session.Must(session.NewSession(awsConf))
 	cli := s3.New(sess)

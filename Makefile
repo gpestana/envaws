@@ -12,5 +12,8 @@ test:
 mv-bin:
 	mv envaws ./bin
 
-env:
-	./envaws -conf ./example/configs.json -command "./example/env.sh"
+s3:
+	./envaws -conf ./example/configs.json -service s3 -command "./example/env.sh"
+
+ssm:
+	./envaws -conf ./example/configs.json -service ssm -command "./example/env.sh"
