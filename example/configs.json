@@ -5,5 +5,7 @@
 	  "bucket": "gpestana-conf",
 	  "key": "foo/env.json"
   },
-  "ssm": {}
+  "ssm": {
+    "parameters": ["test", "hello", "world"]
+  }
 }

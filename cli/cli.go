@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"errors"
@@ -31,5 +31,13 @@ func (cli *CLI) Run() error {
 		flag.PrintDefaults()
 		return errors.New("-command flag missing")
 	}
+
+	switch cli.Service {
+	case "s3", "ssm", "":
+	default:
+		flag.PrintDefaults()
+		return errors.New("-service may be one of {s3, ssm}")
+	}
+
 	return nil
 }

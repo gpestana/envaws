@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 )
 
 func TestParseS3OKConfig(t *testing.T) {
+	srv := "serviceTest"
 	p1 := "./conf.json"
 	c1 := `
 {
@@ -25,7 +26,7 @@ func TestParseS3OKConfig(t *testing.T) {
 
 	defer os.Remove(p1)
 	createConfFile(p1, c1)
-	conf, err := parseConfig(p1)
+	conf, err := New(p1, srv)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,6 +39,10 @@ func TestParseS3OKConfig(t *testing.T) {
 	if conf.S3.Key != expKey {
 		t.Error(fmt.Sprintf("expected S3 key %v, got %v", expKey, conf.S3.Key))
 	}
+	if conf.Service != srv {
+		t.Error(fmt.Sprintf("expected Service %v, got %v", srv, conf.Service))
+	}
+
 }
 
 // creates configuration file for testing purposes
