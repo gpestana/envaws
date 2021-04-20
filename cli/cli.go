@@ -14,7 +14,7 @@ type CLI struct {
 func (cli *CLI) Run() error {
 	conf := flag.String("conf", "", "Path for envaws configurations [required]")
 	command := flag.String("command", "", "Command to be called [required]")
-	serv := flag.String("service", "", "Ssrvice to use (ssm or s3); default: ssm")
+	serv := flag.String("service", "", "Service to use (ssm or s3); default: ssm")
 
 	flag.Parse()
 
